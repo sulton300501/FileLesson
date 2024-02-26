@@ -1,7 +1,7 @@
 ﻿using FileAPILesson.Domain.Entities.DTOs;
 using FileAPILesson.Domain.Entities.Models;
 using FileAPILesson.Infrastructure.Persistance;
-
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,24 +39,56 @@ namespace FileApiLesson.Application.Service.UserProfilService
         }
 
 
-        public Task<bool> DeleteUserProfileAsync(int id)
+
+        public async Task<bool> DeleteUserProfileAsync(int id)
         {
-            throw new NotImplementedException();
+            var userToDelete = await _context.Users.FindAsync(id);
+
+            if (userToDelete == null)
+            {
+                return false; // User not found
+            }
+
+            _context.Users.Remove(userToDelete);
+            await _context.SaveChangesAsync();
+
+            return true; // User deleted successfully
         }
 
-        public Task<List<UserProfile>> GetAllUserProfileAsync()
+        public async Task<List<UserProfile>> GetAllUserProfileAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Users.ToListAsync();
         }
+
+
+       
 
         public Task<UserProfile> GetByIdUserprofileAsyn()
         {
             throw new NotImplementedException();
         }
 
-        public Task<UserProfile> UpdateUserProfileAsync(int id, UserProfileDTO modelDto)
+        public async Task<UserProfile> UpdateUserProfileAsync(int id, UserProfileDTO modelDto)
         {
-            throw new NotImplementedException();
+            var userToUpdate = await _context.Users.FindAsync(id);
+
+            if (userToUpdate == null)
+            {
+                return null; // User not found
+            }
+
+            // Update user properties based on the DTO
+            userToUpdate.FullName = modelDto.FullName;
+            userToUpdate.Phone = modelDto.Phone;
+            userToUpdate.UserRole = Convert.ToInt32(modelDto.UserRole);
+            userToUpdate.Login = modelDto.Login;
+            userToUpdate.Password = modelDto.Password;
+
+            await _context.SaveChangesAsync();
+
+            return userToUpdate;
         }
+
+        
     }
 }
