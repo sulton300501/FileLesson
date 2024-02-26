@@ -13,8 +13,11 @@
 
         public  async Task<string> AddPictureAndGetPath(IFormFile file)
         {
-            string path = Path.Combine(_env.WebRootPath,Guid.NewGuid()+"images",file.FileName);
-            using(var stream = File.Create(path))
+            string path = Path.Combine(_env.WebRootPath, "images", Guid.NewGuid().ToString());//windows. c  windows\c   windows/c
+
+            Directory.CreateDirectory(path);
+
+            using(var stream = File.Create(Path.Combine(path, file.FileName)))
             {
                await  file.CopyToAsync(stream);
             }

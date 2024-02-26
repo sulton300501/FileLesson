@@ -22,14 +22,20 @@ namespace FileLesson.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromForm] UserProfileDTO userProfileDTO,IFormFile picture)
+        public async Task<IActionResult> CreateUser([FromForm] UserProfileDTO userProfileDTO)
         {
             UserProfileExternalService service = new UserProfileExternalService(_env);
-         //   var path = service.AddPictureAndGetPath(userProfileDTO.Picture);
-            string picturePath = await service.AddPictureAndGetPath(userProfileDTO.Picture);
+
+            var picture = userProfileDTO.Picture;
+            
+            var path = service.AddPictureAndGetPath(picture);
+
+            string picturePath = await service.AddPictureAndGetPath(picture);
 
 
-                var result = _userService.CreateUserProfileAsync(userProfileDTO , picturePath);
+            var result = await _userService.CreateUserProfileAsync(userProfileDTO, picturePath);
+
+
             return Ok(result);
         }
 
